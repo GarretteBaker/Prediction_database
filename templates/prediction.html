@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction</title>
+</head>
+<body>
+    <h1>Prediction</h1>
+    <form action="/prediction/{{ prediction.id }}" method="post">
+        <label for="prediction">Prediction:</label><br>
+        <input type="text" id="prediction" name="prediction" value="{{ prediction.prediction }}"><br>
+        <label for="probability">Probability:</label><br>
+        <input type="number" id="probability" name="probability" min="0" max="1" step="0.01" value="{{ most_recent_probability }}"><br>
+        <label for="resolution_date">Resolution Date (YYYY/MM/DD):</label><br>
+        <input type="text" id="resolution_date" name="resolution_date" value="{{ prediction.resolution_date }}"><br>
+        <label for="note">Note:</label><br>
+        <input type="text" id="note" name="note" value="{{ prediction.note }}"><br>
+        <label for="status">Status:</label><br>
+        <select id="status" name="status">
+            <option value="">Choose a status</option>
+            <option value="Correct" {% if prediction.status == 'Correct' %}selected{% endif %}>Correct</option>
+            <option value="Incorrect" {% if prediction.status == 'Incorrect' %}selected{% endif %}>Incorrect</option>
+            <option value="Ambiguous" {% if prediction.status == 'Ambiguous' %}selected{% endif %}>Ambiguous</option>
+        </select><br>
+        <input type="submit" value="Update">
+    </form>
+</body>
+</html>

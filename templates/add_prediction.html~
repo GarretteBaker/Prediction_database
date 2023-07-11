@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Prediction</title>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+    $( function() {
+        $( "#resolution_date" ).datepicker({
+            dateFormat: "yy/mm/dd"
+        });
+    } );
+    </script>
+</head>
+<body>
+    <h1>Add a New Prediction</h1>
+    <form action="/prediction" method="post">
+    <label for="prediction">Prediction:</label><br>
+    <input type="text" id="prediction" name="prediction"><br>
+    <label for="probability">Probability:</label><br>
+    <input type="number" id="probability" name="probability" min="0" max="1" step="0.01"><br>
+    <label for="resolution_date">Resolution Date (YYYY/MM/DD):</label><br>
+    <input type="text" id="resolution_date" name="resolution_date"><br>
+    <label for="note">Note:</label><br>
+    <input type="text" id="note" name="note"><br>
+    <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+

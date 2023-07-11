@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Predictions</title>
+</head>
+<body>
+    <h1>Predictions</h1>
+    <ul>
+    {% for prediction in predictions %}
+        <li><a href="/prediction/{{ prediction.id }}">{{ prediction.prediction }}</a></li>
+    {% endfor %}
+    </ul>
+    <h2>Probability Updates</h2>
+    <ul>
+      {% for prediction in predictions %}
+    <li>
+        <a href="/prediction/{{ prediction.id }}">{{ prediction.prediction }}</a>
+        <ul>
+        {% for update in probability_updates[prediction.id] %}
+            <li>{{ update.date }}: {{ update.probability }}</li>
+        {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+
+    </ul>
+
+</body>
+</html>
