@@ -84,22 +84,58 @@ def update_prediction(id):
     
     return jsonify({'message': 'Prediction updated'})
 
-@app.route('/export', methods=['GET'])
+@app.route('/export', methods=['GET'])  
 def export_predictions():
-    si = io.StringIO()
-    cw = csv.writer(si)
-    # write header
-    cw.writerow(['id', 'prediction', 'resolution_date', 'note', 'status', 'probability_updates'])
+
+  output = io.StringIO()
+  writer = csv.writer(output)
+
+  # Get unique update dates
+  dates = set()
+  for prediction in Prediction.query.all():
+    for update in prediction.probability_updates:
+      dates.add(update.date)
+  dates = sorted(list(dates))
+
+  # Write header
+  header = ['prediction', 'resolution_date'] + dates
+  writer.writerow(header)
+
+  # Write data rows
+  for prediction in Prediction.query.all():
+    row = [prediction.prediction, prediction.resolution_date]
+
+    update_map = {up.date: up.probability for up in prediction.probability_updates}
+    for date in dates:
+      if date in update_map:
+        row.append(update_map[date])  
+      else:
+        row.append(None)
     
-    predictions = Prediction.query.all()
-    for prediction in predictions:
-        probability_updates_str = ';'.join(f'{pu.date}: {pu.probability}' for pu in prediction.probability_updates)
-        cw.writerow([prediction.id, prediction.prediction, prediction.resolution_date, prediction.note, prediction.status, probability_updates_str])
+    writer.writerow(row)
+
+  # Return CSV response
+  response = make_response(output.getvalue())
+  response.headers['Content-Disposition'] = 'attachment; filename=predictions.csv'
+  response.headers['Content-type'] = 'text/csv'
+
+  return response
+# @app.route('/export', methods=['GET'])
+# def export_predictions():
+#     si = io.StringIO()
+#     cw = csv.writer(si)
+#     # write header
+#     cw.writerow(['id', 'prediction', 'resolution_date', 'note', 'status', 'probability_updates'])
+    
+#     predictions = Prediction.query.all()
+#     for prediction in predictions:
+#         probability_updates_str = ';'.join(f'{pu.date}: {pu.probability}' for pu in prediction.probability_updates)
+#         cw.writerow([prediction.id, prediction.prediction, prediction.resolution_date, prediction.note, prediction.status, probability_updates_str])
         
-    output = make_response(si.getvalue())
-    output.headers["Content-Disposition"] = "attachment; filename=predictions.csv"
-    output.headers["Content-type"] = "text/csv"
-    return output
+#     output = make_response(si.getvalue())
+#     output.headers["Content-Disposition"] = "attachment; filename=predictions.csv"
+#     output.headers["Content-type"] = "text/csv"
+#     return output
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
